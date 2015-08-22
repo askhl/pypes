@@ -128,7 +128,7 @@ def generate(board, disallow_tetravalent=False):
     # In the improbable case that we are not done, we have to do the
     # ones we don't like as well:
     for tile, direction in bad_connections:
-        try_connect(tile, direction, True)
+        try_connect(tile, direction, False)
 
 def main():
     p = OptionParser()
