@@ -99,7 +99,7 @@ def set_neighbours_periodic(board):
             tile.set_neighbour(board[x, (y + 1) % board.ny], DOWN)
             tile.set_neighbour(board[(x + 1) % board.nx, y], RIGHT)
 
-def generate(board, allow_tetravalent=True):
+def generate(board, disallow_tetravalent=False):
     ntiles = board.nx * board.ny
     possible_connections = []
     for y in range(board.ny):
@@ -108,12 +108,27 @@ def generate(board, allow_tetravalent=True):
                 possible_connections.append((board[x, y], direction))
 
     random.shuffle(possible_connections)
-    for tile, direction in possible_connections:
+
+    bad_connections = []
+
+    def try_connect(tile, direction, disallow_tetravalent):
         tile2 = tile.neighbours[direction]
         if tile.colour == tile2.colour:
-            continue
+            return
+        if disallow_tetravalent and sum(tile.connections) == 3 \
+                or sum(tile2.connections) == 3:
+            bad_connections.append((tile, direction))
+            return
         tile.connect(direction)
         tile2.floodfill(tile.colour)
+
+    for tile, direction in possible_connections:
+        try_connect(tile, direction, disallow_tetravalent)
+
+    # In the improbable case that we are not done, we have to do the
+    # ones we don't like as well:
+    for tile, direction in bad_connections:
+        try_connect(tile, direction, True)
 
 def main():
     p = OptionParser()
@@ -126,7 +141,7 @@ def main():
 
     set_neighbours_periodic(board)
 
-    generate(board)
+    generate(board, disallow_tetravalent=True)
 
     print(board.tostring())
 
