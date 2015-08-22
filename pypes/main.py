@@ -1,11 +1,8 @@
+# -*- coding: utf-8 -*-
 from __future__ import print_function, unicode_literals
 from optparse import OptionParser
 import random
 from itertools import count
-
-#connections2unicode = ['\u00b7',
-#                       '\u2576',
-#                       '\u......]
 
 connections2unicode = '·╶╵└╴─┘┴╷┌│├┐┬┤┼'
 
@@ -55,7 +52,7 @@ class Tile:
     def get_neighbour(self, direction):
         return self.neighbours[direction]
 
-    def __str__(self):
+    def tostring(self):
         return tounicode(self.connections)
 
     def floodfill(self, colour):
@@ -87,10 +84,10 @@ class Board:
         x, y = xy
         return self.tiles[y][x]
 
-    def __repr__(self):
+    def tostring(self):
         lines = []
         for y in range(self.ny):
-            lines.append(''.join([str(tile) for tile in self.tiles[y]]))
+            lines.append(''.join([tile.tostring() for tile in self.tiles[y]]))
         return '\n'.join(lines)
 
 def set_neighbours_periodic(board):
@@ -131,11 +128,7 @@ def main():
 
     generate(board)
 
-    #board[2,1].connect(UP)
-    
-    print(board)
-    #print(unicode(board).decode('utf8'))
-    #print(board[2, 1])
+    print(board.tostring())
 
 if __name__ == '__main__':
     main()
